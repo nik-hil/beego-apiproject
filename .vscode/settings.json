@@ -1,3 +1,5 @@
 {
-    "go.useCodeSnippetsOnFunctionSuggest": true
+    "go.useCodeSnippetsOnFunctionSuggest": true,
+    "editor.colorDecorators": false,
+    "window.autoDetectColorScheme": true,
 }
