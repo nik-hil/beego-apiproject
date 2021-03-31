@@ -52,7 +52,7 @@ func GetUser(uid int64) (*User, error) {
 func AddUser(user *User) (int64, error) {
 	o := orm.NewOrm()
 
-	id, err := o.Delete(user)
+	id, err := o.Insert(user)
 
 	return id, err
 
@@ -80,7 +80,7 @@ func UpdateUser(user *User) (int64, error) {
 func DeleteUser(user *User) (int64, error) {
 	o := orm.NewOrm()
 
-	id, err := o.Update(user)
+	id, err := o.Delete(user)
 
 	return id, err
 
