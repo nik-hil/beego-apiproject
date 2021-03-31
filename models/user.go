@@ -71,16 +71,14 @@ func GetAllUsers() (num int64, users []*User, err error) {
 
 func UpdateUser(user *User) (int64, error) {
 	o := orm.NewOrm()
-
 	id, err := o.Update(user)
-
 	return id, err
-
 }
-func DeleteUser(user *User) (int64, error) {
-	o := orm.NewOrm()
 
-	id, err := o.Delete(user)
+func DeleteUser(uid int64) (int64, error) {
+	o := orm.NewOrm()
+	user := User{Id: uid}
+	id, err := o.Delete(&user)
 
 	return id, err
 

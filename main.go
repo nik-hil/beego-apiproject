@@ -30,7 +30,7 @@ func main() {
 	for _, u := range ul {
 		fmt.Println(num, u, err)
 	}
-	id, err = models.DeleteUser(&user)
+	id, err = models.DeleteUser(uid)
 	fmt.Println("After deleting ", id, err)
 	beego.Run()
 }
