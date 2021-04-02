@@ -3,6 +3,8 @@ package controllers
 import (
 	"apiproject/models"
 	"encoding/json"
+	"fmt"
+	"net/http"
 	"strconv"
 
 	beego "github.com/beego/beego/v2/server/web"
@@ -16,14 +18,16 @@ type UserController struct {
 // @Title CreateUser
 // @Description create users
 // @Param	body		body 	models.User	true		"body for user content"
-// @Success 200 {int} models.User.Id
+// @Success 201 {int} models.User.Id
 // @Failure 403 body is empty
 // @router / [post]
 func (u *UserController) Post() {
 	var user models.User
 	json.Unmarshal(u.Ctx.Input.RequestBody, &user)
 	uid, _ := models.AddUser(&user)
+	fmt.Println("--------", user, uid)
 	u.Data["json"] = map[string]interface{}{"uid": uid}
+	u.Ctx.Output.Status = http.StatusCreated
 	u.ServeJSON()
 }
 
