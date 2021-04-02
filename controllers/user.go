@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/beego/beego/v2/client/orm"
 	"github.com/beego/beego/v2/core/validation"
 	beego "github.com/beego/beego/v2/server/web"
 )
@@ -118,23 +119,59 @@ func (u *UserController) Delete() {
 	u.ServeJSON()
 }
 
-// // @Title Login
-// // @Description Logs user into the system
-// // @Param	username		query 	string	true		"The username for login"
-// // @Param	password		query 	string	true		"The password for login"
-// // @Success 200 {string} login success
-// // @Failure 403 user not exist
-// // @router /login [get]
-// func (u *UserController) Login() {
-// 	username := u.GetString("username")
-// 	password := u.GetString("password")
-// 	if models.Login(username, password) {
-// 		u.Data["json"] = "login success"
-// 	} else {
-// 		u.Data["json"] = "user not exist"
-// 	}
-// 	u.ServeJSON()
-// }
+// @Title Login
+// @Description Logs user into the system
+// @Param	username		query 	string	true		"The username for login"
+// @Param	password		query 	string	true		"The password for login"
+// @Success 200 {string} login success
+// @Failure 403 user not exist
+// @router /login [post]
+func (u *UserController) Login() {
+	type LoginUser struct {
+		Username string `valid:"Required"`
+		Password string `valid:"Required"`
+	}
+	defer u.ServeJSON()
+	var loginUser LoginUser
+	json.Unmarshal(u.Ctx.Input.RequestBody, &loginUser)
+	valid := validation.Validation{}
+	validated, err := valid.Valid(&loginUser)
+	if err != nil {
+		log.Println(err)
+	}
+	if !validated {
+		errors := make(map[string]string)
+		for _, err := range valid.Errors {
+			errors[err.Field] = err.Message
+		}
+		u.Data["json"] = errors
+		u.Ctx.Output.Status = http.StatusBadRequest
+	}
+
+	o := orm.NewOrm()
+	qs := o.QueryTable("user")
+	qs = qs.Filter("Username", loginUser.Username).Filter("Password", loginUser.Password)
+	exist := qs.Exist()
+	type Response struct {
+		Success bool
+		Message string
+	}
+	var data Response
+	if exist {
+		data.Success = true
+		data.Message = "User logged in successfully"
+		var user models.User
+		qs.One(&user)
+		// successfully login, put the user into session
+		u.SetSession("User", user)
+		log.Printf("Logged in user %s", user.Username)
+	} else {
+		data.Success = false
+		data.Message = "Incorrect username or password"
+	}
+
+	u.Data["json"] = data
+}
 
 // // @Title logout
 // // @Description Logs out current logged in user session
@@ -143,4 +180,5 @@ func (u *UserController) Delete() {
 // func (u *UserController) Logout() {
 // 	u.Data["json"] = "logout success"
 // 	u.ServeJSON()
+//  u.DestroySession
 // }

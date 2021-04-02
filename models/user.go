@@ -83,14 +83,3 @@ func DeleteUser(uid int64) (int64, error) {
 	return id, err
 
 }
-
-// var UserList map[int]*User
-
-// func GetAllUsers() map[int]*User {
-// 	o := orm.NewOrm()
-// 	_, err := o.QueryTable("users").Values(&UserList)
-// 	if err != nil {
-// 		panic(err)
-// 	}
-// 	return UserList
-// }
