@@ -3,9 +3,11 @@ package controllers
 import (
 	"apiproject/models"
 	"encoding/json"
+	"log"
 	"net/http"
 	"strconv"
 
+	"github.com/beego/beego/v2/core/validation"
 	beego "github.com/beego/beego/v2/server/web"
 )
 
@@ -22,8 +24,27 @@ type UserController struct {
 // @router / [post]
 func (u *UserController) Post() {
 	var user models.User
+	valid := validation.Validation{}
 	json.Unmarshal(u.Ctx.Input.RequestBody, &user)
-	uid, _ := models.AddUser(&user)
+	validated, err := valid.Valid(&user)
+	if err != nil {
+		log.Println(err)
+	}
+	if !validated {
+		errors := make(map[string]string)
+		for _, err := range valid.Errors {
+			errors[err.Field] = err.Message
+		}
+		u.Data["json"] = errors
+		u.Ctx.Output.Status = http.StatusBadRequest
+		u.ServeJSON()
+	}
+	uid, err := models.AddUser(&user)
+	if err != nil {
+		u.Data["json"] = err
+		u.Ctx.Output.Status = http.StatusInternalServerError
+		u.ServeJSON()
+	}
 	u.Data["json"] = map[string]interface{}{"uid": uid}
 	u.Ctx.Output.Status = http.StatusCreated
 	u.ServeJSON()

@@ -12,9 +12,9 @@ import (
 
 type User struct {
 	Id       int64
-	Username string `orm:"size(100)"`
-	Password string `orm:"size(100)"`
-	Email    string `orm:"unique"`
+	Username string `orm:"size(100)" valid:"Required"`
+	Password string `orm:"size(100)" valid:"Required"`
+	Email    string `orm:"unique" valid:"Required; Email; MaxSize(100)"`
 }
 
 type Profile struct {
