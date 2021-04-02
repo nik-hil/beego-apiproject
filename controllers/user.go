@@ -3,7 +3,6 @@ package controllers
 import (
 	"apiproject/models"
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"strconv"
 
@@ -25,7 +24,6 @@ func (u *UserController) Post() {
 	var user models.User
 	json.Unmarshal(u.Ctx.Input.RequestBody, &user)
 	uid, _ := models.AddUser(&user)
-	fmt.Println("--------", user, uid)
 	u.Data["json"] = map[string]interface{}{"uid": uid}
 	u.Ctx.Output.Status = http.StatusCreated
 	u.ServeJSON()
