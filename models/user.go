@@ -17,18 +17,8 @@ type User struct {
 	Email    string `orm:"unique" valid:"Required; Email; MaxSize(100)"`
 }
 
-type Profile struct {
-	Id      int64  `orm:"auto"`
-	Gender  string `orm:"size(10)"`
-	Age     int64
-	Address string `orm:"size(100)"`
-
-	User *User `orm:"rel(fk)"`
-}
-
 func init() {
 	orm.RegisterModel(new(User))
-	orm.RegisterModel(new(Profile))
 	// set default database
 	// orm.RegisterDriver("sqlite", orm.DRSqlite)
 	// orm.RegisterDataBase("default", "sqlite3", "my_db")
@@ -36,7 +26,7 @@ func init() {
 	orm.RegisterDataBase("default", "mysql", "root:root@/my_db?charset=utf8")
 	orm.RunSyncdb("default", false, true)
 
-	fmt.Println("In models.init")
+	fmt.Println("In models userinit")
 }
 
 func GetUser(uid int64) (*User, error) {
@@ -83,14 +73,3 @@ func DeleteUser(uid int64) (int64, error) {
 	return id, err
 
 }
-
-// var UserList map[int]*User
-
-// func GetAllUsers() map[int]*User {
-// 	o := orm.NewOrm()
-// 	_, err := o.QueryTable("users").Values(&UserList)
-// 	if err != nil {
-// 		panic(err)
-// 	}
-// 	return UserList
-// }
