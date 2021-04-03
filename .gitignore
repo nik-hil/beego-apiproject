@@ -68,3 +68,5 @@ _testmain.go
 
 apiproject*
 lastupdate.tmp
+debug
+dlv
