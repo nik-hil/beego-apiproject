@@ -163,7 +163,7 @@ func (u *UserController) Login() {
 		var user models.User
 		qs.One(&user)
 		// successfully login, put the user into session
-		u.SetSession("User", user)
+		u.SetSession("User", user.Username)
 		log.Printf("Logged in user %s", user.Username)
 	} else {
 		data.Success = false
@@ -173,12 +173,14 @@ func (u *UserController) Login() {
 	u.Data["json"] = data
 }
 
-// // @Title logout
-// // @Description Logs out current logged in user session
-// // @Success 200 {string} logout success
-// // @router /logout [get]
-// func (u *UserController) Logout() {
-// 	u.Data["json"] = "logout success"
-// 	u.ServeJSON()
-//  u.DestroySession
-// }
+// @Title logout
+// @Description Logs out current logged in user session
+// @Success 200 {string} logout success
+// @router /logout [get]
+func (u *UserController) Logout() {
+	u.Data["json"] = "logout success"
+	username := u.GetSession("User")
+	log.Printf("Logged out user %s", username)
+	u.DestroySession()
+	u.ServeJSON()
+}
