@@ -82,7 +82,16 @@ func (c *ProfileController) GetOne() {
 // @Failure 403
 // @router / [get]
 func (c *ProfileController) GetAll() {
-
+	var query map[string]string
+	var fields []string
+	var sortby []string
+	var order = []string{"Id"}
+	var offset int64
+	var limit int64
+	profiles, _ := models.GetAllProfile(query, fields, sortby, order, offset, limit)
+	log.Println(profiles)
+	c.Data["json"] = profiles
+	c.ServeJSON()
 }
 
 // Put ...
